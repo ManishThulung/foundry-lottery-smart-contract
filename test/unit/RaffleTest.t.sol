@@ -19,6 +19,7 @@ contract RaffleTest is Test {
     uint256 raffleEntranceFee;
     uint32 callbackGasLimit;
     address vrfCoordinatorV2;
+    address link;
 
     uint256 private constant ENTRANCE_FEE = 0.1 ether;
 
@@ -34,7 +35,8 @@ contract RaffleTest is Test {
             automationUpdateInterval,
             raffleEntranceFee,
             callbackGasLimit,
-            vrfCoordinatorV2
+            vrfCoordinatorV2,
+            link
         ) = helperConfig.activeNetworkConfig();
         vm.deal(PLAYER, STARTING_VALUE);
     }
