@@ -49,16 +49,16 @@ contract Raffle is VRFConsumerBaseV2 {
     event PickedWinner(address indexed winner);
 
     constructor(
-        uint256 entranceFee,
-        uint256 interval,
-        address vrfCoordinator,
-        bytes32 gasLane,
         uint64 subscriptionId,
-        uint32 callbackGasLimit
-    ) VRFConsumerBaseV2(vrfCoordinator) {
+        bytes32 gasLane, // keyHash
+        uint256 interval,
+        uint256 entranceFee,
+        uint32 callbackGasLimit,
+        address vrfCoordinatorV2
+    ) VRFConsumerBaseV2(vrfCoordinatorV2) {
         i_entranceFee = entranceFee;
         i_interval = interval;
-        i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinator);
+        i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
         i_callbackGasLimit = callbackGasLimit;
@@ -68,7 +68,7 @@ contract Raffle is VRFConsumerBaseV2 {
     }
 
     function enterRaffle() public payable {
-        if (i_entranceFee < msg.value) {
+        if (i_entranceFee > msg.value) {
             revert Raffle__LowEntraceFee();
         }
         if (s_raffleState != RaffleState.OPEN) {
@@ -141,7 +141,15 @@ contract Raffle is VRFConsumerBaseV2 {
     }
 
     /** Getter functions */
-    function getEntranceFee() public view returns (uint256) {
+    function getEntranceFee() external view returns (uint256) {
         return i_entranceFee;
+    }
+
+    function getRaffleState() external view returns (RaffleState) {
+        return s_raffleState;
+    }
+
+    function getPlayer(uint256 index) external view returns (address) {
+        return s_players[index];
     }
 }
